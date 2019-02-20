@@ -1,9 +1,9 @@
-const express = require("express");
-const nunjucks = require("nunjucks");
+const express = require('express')
+const nunjucks = require('nunjucks')
 
-const app = express();
+const app = express()
 
-/*const logMiddleware = (req, res, next) => {
+/* const logMiddleware = (req, res, next) => {
   console.log(
     `HOST: ${req.headers.host} | URL: ${req.url} | METHOD: ${req.method}`
   );
@@ -20,27 +20,30 @@ app.get("/", logMiddleware, (req, res) => {
 
 app.get("/nome/:name", (req, res) => {
   return res.send(`Bem vindo, ${req.params.name}`);
-});*/
-nunjucks.configure("views", {
+}); */
+
+nunjucks.configure('views', {
   autoscape: true,
   express: app,
   watch: true
-});
+})
 
-app.set("view engine", "njk");
+app.use(express.urlencoded({ extended: false }))
+app.set('view engine', 'njk')
 
-const users = ["Leonardo", "Lucas", "Otavio"];
+const users = ['Leonardo', 'Lucas', 'Otavio']
 
-app.get("/", (req, res) => {
-  return res.render("list", { users });
-});
+app.get('/', (req, res) => {
+  return res.render('list', { users })
+})
 
-app.get("/new", (req, res) => {
-  return res.render("new");
-});
+app.get('/new', (req, res) => {
+  return res.render('new')
+})
 
-app.post("/create", (req, res) => {
-  return;
-});
+app.post('/create', (req, res) => {
+  users.push(req.body.user)
+  return res.redirect('/')
+})
 
-app.listen(3000);
+app.listen(3000)
