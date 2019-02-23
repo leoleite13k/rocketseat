@@ -1,18 +1,43 @@
 const express = require('express')
-const routes = express.Router()
-const UserController = require('./app/controllers/UserController')
 const multerConfig = require('./config/multer')
 const upload = require('multer')(multerConfig)
-const SessionController = require('./app/controllers/SessionController')
 
-routes.get('/', SessionController.create)
+const routes = express.Router()
+
+const UserController = require('./app/controllers/UserController')
+const SessionController = require('./app/controllers/SessionController')
+const DashboardController = require('./app/controllers/DashboardController')
+const FileController = require('./app/controllers/FileController')
+const AppointmentController = require('./app/controllers/AppointmentController')
+const AvailableController = require('./app/controllers/AvailableController')
+
+
+const AuthMiddleware = require('./app/middlewares/Auth')
+const GuestMiddleware = require('./app/middlewares/Guest')
+
+routes.use((req, res, next) => {
+  res.locals.flashSuccess = req.flash('success')
+  res.locals.flashError = req.flash('error')
+
+  return next()
+})
+
+routes.get('/files/:file', FileController.show)
+
+routes.get('/', GuestMiddleware, SessionController.create)
 routes.post('/signin', SessionController.store)
 
-routes.get('/signup', UserController.create)
+routes.get('/signup', GuestMiddleware, UserController.create)
 routes.post('/signup', upload.single('avatar'), UserController.store)
 
-routes.get('/app/dashboard', (req, res) => {
-  console.log(req.session.user)
-  res.render('dashboard')
-})
+routes.use('/app', AuthMiddleware)
+
+routes.get('/app/dashboard', DashboardController.index)
+
+routes.get('/app/logout', SessionController.destroy)
+
+routes.get('/app/appointments/new/:provider', AppointmentController.create)
+
+routes.get('/app/available/:provider', AvailableController.index)
+
 module.exports = routes
