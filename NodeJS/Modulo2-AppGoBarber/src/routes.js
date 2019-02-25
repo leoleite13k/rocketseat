@@ -11,7 +11,6 @@ const FileController = require('./app/controllers/FileController')
 const AppointmentController = require('./app/controllers/AppointmentController')
 const AvailableController = require('./app/controllers/AvailableController')
 
-
 const AuthMiddleware = require('./app/middlewares/Auth')
 const GuestMiddleware = require('./app/middlewares/Guest')
 
@@ -37,6 +36,7 @@ routes.get('/app/dashboard', DashboardController.index)
 routes.get('/app/logout', SessionController.destroy)
 
 routes.get('/app/appointments/new/:provider', AppointmentController.create)
+routes.post('/app/appointments/new/:provider', AppointmentController.store)
 
 routes.get('/app/available/:provider', AvailableController.index)
 
