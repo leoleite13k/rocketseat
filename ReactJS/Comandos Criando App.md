@@ -25,3 +25,9 @@ Instalar o reloader automatico
 `npm install -D webpack-dev-server`
 
 Inserir  no webpack.config o objeto devServer e alterar o script no package para "dev": "webpack-dev-server --mode development"
+
+Inserir também a seguinte plugin para permitir definição das PropsType dentro da propria classe.
+
+`npm install -D @babel/plugin-proposal-class-properties`
+
+Depois alterar no .babelrc em plugins.
