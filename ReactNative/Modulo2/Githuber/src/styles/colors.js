@@ -3,7 +3,7 @@ export default {
   lighter: '#EEE',
   light: '#DDD',
   regular: '#999',
-  dar: '#666',
+  dark: '#666',
   darker: '#333',
   black: '#000',
 
