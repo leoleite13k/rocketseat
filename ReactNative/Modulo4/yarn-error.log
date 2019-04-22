@@ -1,0 +1,27 @@
+Arguments: 
+  /usr/local/Cellar/node/11.12.0/bin/node /usr/local/Cellar/yarn/1.15.2/libexec/bin/yarn.js add react-native --exact
+
+PATH: 
+  /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/leonardoleite/Android/Sdk/tools:/Users/leonardoleite/Android/Sdk/platform-tools
+
+Yarn version: 
+  1.15.2
+
+Node version: 
+  11.12.0
+
+Platform: 
+  darwin x64
+
+Trace: 
+  Error: getaddrinfo ENOTFOUND registry.yarnpkg.com registry.yarnpkg.com:443
+      at GetAddrInfoReqWrap.onlookup [as oncomplete] (dns.js:58:26)
+
+npm manifest: 
+  {"name":"Modulo4","version":"0.0.1","private":true,"scripts":{"start":"node node_modules/react-native/local-cli/cli.js start"}}
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
