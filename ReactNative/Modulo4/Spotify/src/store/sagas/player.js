@@ -1,13 +1,53 @@
-import { call, put, select } from 'redux-saga/effects';
+import { call, put, select, take } from 'redux-saga/effects';
+import { eventChannel } from 'redux-saga';
 import TrackPlayer from 'react-native-track-player';
 
 import PlayerActions from '~/store/ducks/player';
 
+function* trackChanged() {
+  const channel = eventChannel((emmiter) => {
+    const onTrackChange = TrackPlayer.addEventListener('playback-track-changed', emmiter);
+
+
+    return () => onTrackChange.remove();
+  });
+
+  try {
+    while (true) {
+      const { nextTrack } = yield take(channel);
+
+      yield put(PlayerActions.setCurrent(nextTrack));
+    }
+  } finally {
+    channel.close();
+  }
+}
+
 export function* init() {
   yield call(TrackPlayer.setupPlayer);
 
-  TrackPlayer.addEventListener('playback-track-changed', console.tron.log);
-  TrackPlayer.addEventListener('playback-state', console.tron.log);
+  TrackPlayer.updateOptions({
+    capabilities: [
+      TrackPlayer.CAPABILITY_PLAY,
+      TrackPlayer.CAPABILITY_PAUSE,
+      TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
+      TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
+      TrackPlayer.CAPABILITY_STOP,
+    ],
+    notificationCapabilities: [
+      TrackPlayer.CAPABILITY_PLAY,
+      TrackPlayer.CAPABILITY_PAUSE,
+      TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
+      TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
+      TrackPlayer.CAPABILITY_STOP,
+    ],
+    compactCapabilities: [
+      TrackPlayer.CAPABILITY_PLAY,
+      TrackPlayer.CAPABILITY_PAUSE,
+    ],
+  });
+
+  TrackPlayer.addEventListener('playback-state', () => {});
 }
 
 export function* setPodcast({ podcast, episodeId }) {
@@ -27,6 +67,7 @@ export function* setPodcast({ podcast, episodeId }) {
   }
 
   yield put(PlayerActions.play());
+  yield call(trackChanged);
 }
 
 export function* play() {
@@ -55,4 +96,10 @@ export function* next() {
     yield call(TrackPlayer.skipToNext);
     yield put(PlayerActions.play());
   }
+}
+
+
+export function* reset() {
+  yield call(TrackPlayer.stop);
+  yield call(TrackPlayer.reset);
 }
