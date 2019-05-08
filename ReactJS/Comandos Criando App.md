@@ -31,3 +31,8 @@ Inserir também a seguinte plugin para permitir definição das PropsType dentro
 `npm install -D @babel/plugin-proposal-class-properties`
 
 Depois alterar no .babelrc em plugins.
+
+
+Resumindo
+yarn add global react-create-app
+yarn add eslint-config-airbnb eslint-plugin-import eslint-plugin-jsx-a11y eslint-plugin-react -D
