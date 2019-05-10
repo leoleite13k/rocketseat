@@ -8,6 +8,19 @@ export const Container = styled.div`
   margin-top: 50px;
 `;
 
+export const Button = styled.button`
+  width: 40px;
+  height: 40px;
+  background: #fff;
+  border: 0;
+
+  align-self: flex-end;
+
+  &:hover {
+    background: ${props => props.color || '#fff'};
+  }
+`;
+
 export const Repository = styled.div`
   width: 250px;
   background: #fff;

@@ -21,18 +21,21 @@ export const Form = styled.form`
     font-size: 18px;
     color: #444;
     border-radius: 3px;
+
+    border: ${props => (props.withError ? '2px solid #f00' : 0)};
   }
 
   button {
+    width: 80px;
     height: 55px;
     padding: 0 20px;
     margin-left: 10px;
     background: #63f5b0;
     color: #fff;
-    border: 0;
     font-size: 20px;
     font-weight: bold;
     border-radius: 3px;
+    border: 0;
 
     &:hover {
       background: #52b89f;
