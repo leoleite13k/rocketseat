@@ -18,11 +18,11 @@ server.use((req, res, next) => {
 function checkIdExists(req, res, next) {
   const { id } = req.params;
 
-  projects.map(item => {
-    if (item.id === id) {
-      return next();
-    }
-  });
+  const projectIndex = projects.findIndex(prj => prj.id === id);
+
+  if (projectIndex >= 0) {
+    return next();
+  }
 
   return res.status(400).json({ error: "Projeto não existente" });
 }
@@ -41,39 +41,19 @@ server.put("/projects/:id", checkIdExists, (req, res) => {
   const { id } = req.params;
   const { title } = req.body;
 
-  projects.map((item, index) => {
-    if (item.id === id) {
-      projects.splice(index, 1, {
-        id: item.id,
-        title: title,
-        tasks: item.tasks
-      });
-    }
-  });
+  const project = projects.find(prj => prj.id === id);
 
-  return res.json(projects);
-});
+  project.title = title;
 
-server.delete("projects/:id", checkIdExists, (req, res) => {
-  const { id } = req.params;
-
-  projects.map((item, index) => {
-    if (item.id === id) {
-      projects.splice(index, 1);
-    }
-  });
-
-  return res.send();
+  return res.json(project);
 });
 
 server.delete("/projects/:id", checkIdExists, (req, res) => {
   const { id } = req.params;
 
-  projects.map((item, index) => {
-    if (item.id === id) {
-      projects.splice(index, 1);
-    }
-  });
+  const projectIndex = projects.findIndex(prj => prj.id === id);
+
+  projects.splice(projectIndex, 1);
 
   return res.send();
 });
@@ -82,20 +62,11 @@ server.post("/projects/:id/tasks", checkIdExists, (req, res) => {
   const { id } = req.params;
   const { title } = req.body;
 
-  projects.map((item, index) => {
-    if (item.id === id) {
-      let newTasks = item.tasks;
-      newTasks.push(title);
+  const project = projects.find(prj => prj.id === id);
 
-      projects.splice(index, 1, {
-        id: item.id,
-        title: item.title,
-        tasks: newTasks
-      });
-    }
-  });
+  project.tasks.push(title);
 
-  return res.json(projects);
+  return res.json(project);
 });
 
 server.listen(3000);
