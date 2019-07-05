@@ -1,0 +1,10 @@
+div.postHeader {
+  display: flex;
+  flex-direction: row;
+
+  div.avatar {
+    height: 100;
+    width: 100;
+    background: #ddd;
+  }
+}

@@ -1,0 +1,14 @@
+div.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #4267b2;
+  height: 50px;
+
+  h1.title {
+    color: #ddd;
+    font-family: sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+  }
+}
