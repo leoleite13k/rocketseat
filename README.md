@@ -1,2 +1,2 @@
 # Rocketseat *
-Aprendedo as Tecnologias : NodeJS, ReactJS e React Native
+Aprendendo as Tecnologias : NodeJS, ReactJS e React Native
