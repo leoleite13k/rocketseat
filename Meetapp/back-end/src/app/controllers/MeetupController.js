@@ -10,7 +10,7 @@ class MeetupController {
       description: Yup.string().required(),
       location: Yup.string().required(),
       date: Yup.date().required(),
-      banner: Yup.string().required(),
+      banner: Yup.number().required(),
     });
 
     if (!(await schema.isValid(req.body))) {
