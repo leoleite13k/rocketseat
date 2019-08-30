@@ -1,9 +1,11 @@
 import React from "react";
 import "./App.css";
 
+import TechList from "./components/TechList";
+
 // Criando componente React
 function App() {
-  return <h1>Hello Rocketseat</h1>;
+  return <TechList />;
 }
 
 export default App;

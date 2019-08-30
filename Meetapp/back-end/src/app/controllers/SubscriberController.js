@@ -2,6 +2,10 @@ import * as Yup from 'yup';
 import { startOfHour, isBefore, differenceInHours } from 'date-fns';
 import Subscriber from '../models/Subscriber';
 import Meetup from '../models/Meetup';
+import User from '../models/User';
+
+import Queue from '../../lib/Queue';
+import ConfirmationMail from '../jobs/ConfirmationMail';
 
 class SubscriberController {
   async store(req, res) {
@@ -71,6 +75,12 @@ class SubscriberController {
     const subscriber = await Subscriber.create({
       meetup_id,
       user_id,
+    });
+
+    const user = await User.findByPk(user_id);
+
+    Queue.add(ConfirmationMail.key, {
+      user,
     });
 
     return res.json(subscriber);
