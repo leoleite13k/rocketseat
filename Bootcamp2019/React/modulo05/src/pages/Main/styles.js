@@ -2,9 +2,9 @@ import styled, { keyframes, css } from 'styled-components';
 
 export const Container = styled.div`
   max-width: 700px;
-  background: #FFF;
+  background: #fff;
   border-radius: 4px;
-  box-shadow: 0 0 20px rgba(0, 0, 0,0.1);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
   padding: 30px;
   margin: 80px auto;
 
@@ -18,7 +18,7 @@ export const Container = styled.div`
       margin-right: 10px;
     }
   }
-`
+`;
 
 export const Form = styled.form`
   margin-top: 30px;
@@ -32,7 +32,7 @@ export const Form = styled.form`
     border-radius: 4px;
     font-size: 16px;
   }
-`
+`;
 
 const rotate = keyframes`
   from {
@@ -63,7 +63,33 @@ export const SubmitButton = styled.button.attrs(props => ({
     opacity: 0.6;
   }
 
-  svg {
-    animation: ${rotate} 2s linear infinite;
+  ${props =>
+    props.loading &&
+    css`
+      svg {
+        animation: ${rotate} 2s linear infinite;
+      }
+    `}
+`;
+
+export const List = styled.ul`
+  list-style: none;
+  margin-top: 30px;
+
+  li {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0px;
+
+    & + li {
+      border-top: 1px solid #eee;
+    }
+
+    a {
+      color: #7159c1;
+      text-decoration: none;
+    }
   }
-`
+`;
