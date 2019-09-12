@@ -1,13 +1,31 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
+
+const rotate = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+`;
 
 export const Loading = styled.div`
-  color: #fff;
-  font-size: 30px;
-  font-weight: bold;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
+
+  strong {
+    color: #fff;
+    font-size: 30px;
+    font-weight: bold;
+    margin-right: 10px;
+  }
+
+  svg {
+    animation: ${rotate} 2s linear infinite;
+  }
 `;
 
 export const Owner = styled.header`
@@ -103,14 +121,14 @@ export const IssueList = styled.ul`
 `;
 
 export const StateIssue = styled.div`
+  display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: space-evenly;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 
   label {
     color: #666;
-    margin-right: 10px;
 
     input {
       margin-left: 10px;
@@ -119,5 +137,22 @@ export const StateIssue = styled.div`
         color: #f00;
       }
     }
+  }
+`;
+
+export const Footer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: ${props => props.jc || 'flex-end'};
+  align-items: center;
+  padding: 10px 0px;
+
+  button {
+    width: 100px;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #eee;
+    color: #fff;
+    background-color: #7159c1;
   }
 `;

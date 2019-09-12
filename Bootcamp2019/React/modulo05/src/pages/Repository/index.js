@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
+import { FaSpinner } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-import { Loading, Owner, IssueList, StateIssue } from './styles';
+import { Loading, Owner, IssueList, StateIssue, Footer } from './styles';
 
 import api from '../../services/api';
 import Container from '../../components/Container';
@@ -20,6 +21,8 @@ export default class Repository extends Component {
     repository: {},
     issues: [],
     loading: true,
+    stateCurrent: 'all',
+    pageCurrent: 1,
   };
 
   async componentDidMount() {
@@ -31,8 +34,7 @@ export default class Repository extends Component {
       api.get(`/repos/${repoName}`),
       api.get(`/repos/${repoName}/issues`, {
         params: {
-          state: 'open',
-          per_page: 5,
+          per_page: 15,
         },
       }),
     ]);
@@ -44,11 +46,66 @@ export default class Repository extends Component {
     });
   }
 
+  async componentDidUpdate(_, prevState) {
+    const { stateCurrent, pageCurrent } = this.state;
+
+    if (
+      prevState.stateCurrent !== stateCurrent ||
+      prevState.pageCurrent !== pageCurrent
+    ) {
+      const { match } = this.props;
+      const repoName = decodeURIComponent(match.params.repository);
+
+      const issues = await api.get(`/repos/${repoName}/issues`, {
+        params: {
+          state: stateCurrent,
+          per_page: 15,
+          page: pageCurrent,
+        },
+      });
+
+      this.setState({
+        issues: issues.data,
+        loading: false,
+      });
+    }
+  }
+
+  handleState = e => {
+    const { target } = e;
+    const { value } = target;
+
+    switch (value) {
+      case 'open':
+        this.setState({ loading: true, stateCurrent: value, pageCurrent: 1 });
+        break;
+
+      case 'closed':
+        this.setState({ loading: true, stateCurrent: value, pageCurrent: 1 });
+        break;
+
+      default:
+        this.setState({ loading: true, stateCurrent: value, pageCurrent: 1 });
+        break;
+    }
+  };
+
   render() {
-    const { repository, issues, loading } = this.state;
+    const {
+      repository,
+      issues,
+      loading,
+      stateCurrent,
+      pageCurrent,
+    } = this.state;
 
     if (loading) {
-      return <Loading>Carregando...</Loading>;
+      return (
+        <Loading>
+          <strong>Carregando</strong>
+          <FaSpinner color="#fff" size={30} />
+        </Loading>
+      );
     }
 
     return (
@@ -64,15 +121,30 @@ export default class Repository extends Component {
           <StateIssue>
             <label>
               Todas
-              <input type="radio" value="all" checked={true} />
+              <input
+                type="radio"
+                value="all"
+                onClick={this.handleState}
+                checked={stateCurrent === 'all'}
+              />
             </label>
             <label>
               Abertas
-              <input type="radio" value="open" checked={false} />
+              <input
+                type="radio"
+                value="open"
+                onClick={this.handleState}
+                checked={stateCurrent === 'open'}
+              />
             </label>
             <label>
               Fechadas
-              <input type="radio" value="closed" checked={false} />
+              <input
+                type="radio"
+                value="closed"
+                onClick={this.handleState}
+                checked={stateCurrent === 'closed'}
+              />
             </label>
           </StateIssue>
           {issues.map(issue => (
@@ -90,6 +162,24 @@ export default class Repository extends Component {
             </li>
           ))}
         </IssueList>
+        <Footer jc={pageCurrent > 1 && 'space-between'}>
+          {pageCurrent > 1 && (
+            <button
+              onClick={() =>
+                this.setState({ loading: true, pageCurrent: pageCurrent - 1 })
+              }
+            >
+              Voltar
+            </button>
+          )}
+          <button
+            onClick={() =>
+              this.setState({ loading: true, pageCurrent: pageCurrent + 1 })
+            }
+          >
+            Próxima
+          </button>
+        </Footer>
       </Container>
     );
   }
