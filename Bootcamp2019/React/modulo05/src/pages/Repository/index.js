@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-import { Loading, Owner, IssueList } from './styles';
+import { Loading, Owner, IssueList, StateIssue } from './styles';
 
 import api from '../../services/api';
 import Container from '../../components/Container';
@@ -61,6 +61,20 @@ export default class Repository extends Component {
         </Owner>
 
         <IssueList>
+          <StateIssue>
+            <label>
+              Todas
+              <input type="radio" value="all" checked={true} />
+            </label>
+            <label>
+              Abertas
+              <input type="radio" value="open" checked={false} />
+            </label>
+            <label>
+              Fechadas
+              <input type="radio" value="closed" checked={false} />
+            </label>
+          </StateIssue>
           {issues.map(issue => (
             <li key={String(issue.id)}>
               <img src={issue.user.avatar_url} alt={issue.user.login} />

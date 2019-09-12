@@ -101,3 +101,23 @@ export const IssueList = styled.ul`
     }
   }
 `;
+
+export const StateIssue = styled.div`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+
+  label {
+    color: #666;
+    margin-right: 10px;
+
+    input {
+      margin-left: 10px;
+
+      &:checked {
+        color: #f00;
+      }
+    }
+  }
+`;
