@@ -29,6 +29,7 @@ export default class User extends Component {
 
   state = {
     stars: [],
+    refreshing: false,
   };
 
   async componentDidMount() {
@@ -40,9 +41,15 @@ export default class User extends Component {
     this.setState({stars: response.data});
   }
 
+  refreshList = () => {
+    this.setState({refreshing: true});
+
+    this.setState({refreshing: false});
+  };
+
   render() {
     const {navigation} = this.props;
-    const {stars} = this.state;
+    const {stars, refreshing} = this.state;
 
     const user = navigation.getParam('user');
 
@@ -57,6 +64,8 @@ export default class User extends Component {
         <Stars
           data={stars}
           keyExtractor={star => String(star.id)}
+          refreshing={refreshing}
+          onRefresh={this.refreshList}
           renderItem={({item}) => (
             <Starred>
               <OwnerAvatar source={{uri: item.owner.avatar_url}} />
