@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {ActivityIndicator} from 'react-native';
 import PropTypes from 'prop-types';
 import api from '../../services/api';
 
@@ -29,20 +30,40 @@ export default class User extends Component {
 
   state = {
     stars: [],
+    page: 1,
+    loading: false,
   };
 
-  async componentDidMount() {
+  componentDidMount() {
+    const {page} = this.state;
+
+    this.loadStarred(page);
+  }
+
+  loadStarred = async page => {
     const {navigation} = this.props;
+    const {stars} = this.state;
+
+    this.setState({loading: true});
+
     const user = navigation.getParam('user');
 
-    const response = await api.get(`/users/${user.login}/starred`);
+    const response = await api.get(`/users/${user.login}/starred?page=${page}`);
 
-    this.setState({stars: response.data});
-  }
+    this.setState({stars: [...stars, response.data], loading: false});
+  };
+
+  loadMore = () => {
+    const {page} = this.state;
+
+    this.loadStarred(page + 1);
+
+    this.setState({page: page + 1});
+  };
 
   render() {
     const {navigation} = this.props;
-    const {stars} = this.state;
+    const {stars, page, loading} = this.state;
 
     const user = navigation.getParam('user');
 
@@ -54,9 +75,14 @@ export default class User extends Component {
           <Bio>{user.bio}</Bio>
         </Header>
 
+        {loading && page === 1 && (
+          <ActivityIndicator size={30} color="#7159c1" />
+        )}
         <Stars
           data={stars}
           keyExtractor={star => String(star.id)}
+          onEndReachedThreshold={0.2}
+          onEndReached={this.loadMore}
           renderItem={({item}) => (
             <Starred>
               <OwnerAvatar source={{uri: item.owner.avatar_url}} />
@@ -67,6 +93,7 @@ export default class User extends Component {
             </Starred>
           )}
         />
+        {loading && page > 1 && <ActivityIndicator size={30} color="#7159c1" />}
       </Container>
     );
   }
