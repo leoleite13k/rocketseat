@@ -11,6 +11,7 @@ import {
   Bio,
   Stars,
   Starred,
+  Touchable,
   OwnerAvatar,
   Info,
   Title,
@@ -36,36 +37,47 @@ export default class User extends Component {
   };
 
   componentDidMount() {
-    const {page} = this.state;
+    this.setState({loading: true});
 
-    this.loadStarred(page);
+    this.loadStarred(1);
   }
 
   loadStarred = async page => {
     const {navigation} = this.props;
     const {stars} = this.state;
 
-    this.setState({loading: true});
-
     const user = navigation.getParam('user');
 
     const response = await api.get(`/users/${user.login}/starred?page=${page}`);
 
-    this.setState({stars: [...stars, response.data], loading: false});
+    this.setState({
+      stars: page === 1 ? response.data : [...stars, ...response.data],
+      loading: false,
+    });
   };
 
   loadMore = () => {
-    const {page} = this.state;
+    const {page, stars} = this.state;
 
-    this.loadStarred(page + 1);
-
-    this.setState({page: page + 1});
+    if (stars.length > 24) {
+      this.setState({loading: true});
+      this.loadStarred(page + 1);
+      this.setState({page: page + 1});
+    }
   };
 
-  refreshList = () => {
+  refreshList = async () => {
     this.setState({refreshing: true});
 
+    await this.loadStarred(1);
+
     this.setState({refreshing: false});
+  };
+
+  handleOpenRepo = repo => {
+    const {navigation} = this.props;
+
+    navigation.navigate('Favorite', {repo});
   };
 
   render() {
@@ -93,13 +105,15 @@ export default class User extends Component {
           refreshing={refreshing}
           onRefresh={this.refreshList}
           renderItem={({item}) => (
-            <Starred>
-              <OwnerAvatar source={{uri: item.owner.avatar_url}} />
-              <Info>
-                <Title>{item.name}</Title>
-                <Author>{item.owner.login}</Author>
-              </Info>
-            </Starred>
+            <Touchable onPress={() => this.handleOpenRepo(item)}>
+              <Starred>
+                <OwnerAvatar source={{uri: item.owner.avatar_url}} />
+                <Info>
+                  <Title>{item.name}</Title>
+                  <Author>{item.owner.login}</Author>
+                </Info>
+              </Starred>
+            </Touchable>
           )}
         />
         {loading && page > 1 && <ActivityIndicator size={30} color="#7159c1" />}
