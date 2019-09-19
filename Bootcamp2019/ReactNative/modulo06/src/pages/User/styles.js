@@ -50,6 +50,10 @@ export const Starred = styled.View`
   align-items: center;
 `;
 
+export const Touchable = styled.TouchableOpacity.attrs({
+  activeOpacity: 0.6,
+})``;
+
 export const OwnerAvatar = styled.Image`
   height: 42px;
   width: 42px;

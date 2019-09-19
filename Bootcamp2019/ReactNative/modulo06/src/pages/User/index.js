@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {ActivityIndicator} from 'react-native';
 import PropTypes from 'prop-types';
 import api from '../../services/api';
 
@@ -10,6 +11,7 @@ import {
   Bio,
   Stars,
   Starred,
+  Touchable,
   OwnerAvatar,
   Info,
   Title,
@@ -29,27 +31,58 @@ export default class User extends Component {
 
   state = {
     stars: [],
+    page: 1,
+    loading: false,
     refreshing: false,
   };
 
-  async componentDidMount() {
-    const {navigation} = this.props;
-    const user = navigation.getParam('user');
+  componentDidMount() {
+    this.setState({loading: true});
 
-    const response = await api.get(`/users/${user.login}/starred`);
-
-    this.setState({stars: response.data});
+    this.loadStarred(1);
   }
 
-  refreshList = () => {
+  loadStarred = async page => {
+    const {navigation} = this.props;
+    const {stars} = this.state;
+
+    const user = navigation.getParam('user');
+
+    const response = await api.get(`/users/${user.login}/starred?page=${page}`);
+
+    this.setState({
+      stars: page === 1 ? response.data : [...stars, ...response.data],
+      loading: false,
+    });
+  };
+
+  loadMore = () => {
+    const {page, stars} = this.state;
+
+    if (stars.length > 24) {
+      this.setState({loading: true});
+      this.loadStarred(page + 1);
+      this.setState({page: page + 1});
+    }
+  };
+
+  refreshList = async () => {
     this.setState({refreshing: true});
+
+    await this.loadStarred(1);
 
     this.setState({refreshing: false});
   };
 
+  handleOpenRepo = repo => {
+    const {navigation} = this.props;
+
+    navigation.navigate('Favorite', {repo});
+  };
+
   render() {
     const {navigation} = this.props;
-    const {stars, refreshing} = this.state;
+    const {stars, page, loading, refreshing} = this.state;
 
     const user = navigation.getParam('user');
 
@@ -61,21 +94,29 @@ export default class User extends Component {
           <Bio>{user.bio}</Bio>
         </Header>
 
+        {loading && page === 1 && (
+          <ActivityIndicator size={30} color="#7159c1" />
+        )}
         <Stars
           data={stars}
           keyExtractor={star => String(star.id)}
+          onEndReachedThreshold={0.2}
+          onEndReached={this.loadMore}
           refreshing={refreshing}
           onRefresh={this.refreshList}
           renderItem={({item}) => (
-            <Starred>
-              <OwnerAvatar source={{uri: item.owner.avatar_url}} />
-              <Info>
-                <Title>{item.name}</Title>
-                <Author>{item.owner.login}</Author>
-              </Info>
-            </Starred>
+            <Touchable onPress={() => this.handleOpenRepo(item)}>
+              <Starred>
+                <OwnerAvatar source={{uri: item.owner.avatar_url}} />
+                <Info>
+                  <Title>{item.name}</Title>
+                  <Author>{item.owner.login}</Author>
+                </Info>
+              </Starred>
+            </Touchable>
           )}
         />
+        {loading && page > 1 && <ActivityIndicator size={30} color="#7159c1" />}
       </Container>
     );
   }
