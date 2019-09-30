@@ -1,14 +1,13 @@
 import React from 'react';
 import Icon from 'react-native-vector-icons/AntDesign';
-import SvgUri from 'react-native-svg-uri';
 
-import { Container, Logo } from './styles';
+import { Container, Logo, Image } from './styles';
 
 export default function Header() {
   return (
     <Container>
       <Logo>
-        <SvgUri source={require('~/assets/images/logo.svg')} />
+        <Image source={require('~/assets/images/logo.png')} />
       </Logo>
       <Icon name="shoppingcart" size={30} solid color="#fff" />
     </Container>

@@ -1,7 +1,7 @@
 import styled from 'styled-components/native';
 
 export const Container = styled.View`
-  height: 75px;
+  height: 80px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
@@ -10,10 +10,12 @@ export const Container = styled.View`
 `;
 
 export const Logo = styled.View`
-  width: 200px;
-  height: 50px;
+  width: 150px;
+  height: 40px;
 `;
 
-export const Image = styled.Image`
+export const Image = styled.Image.attrs({
+  resizeMode: 'contain',
+})`
   flex: 1;
 `;
