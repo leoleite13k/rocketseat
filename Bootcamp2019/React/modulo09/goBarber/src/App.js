@@ -1,5 +1,15 @@
 import React from 'react';
+import { Router } from 'react-router-dom';
 
-export default function App() {
-  return <div />;
+import Routes from './routes';
+import history from './services/history';
+
+function App() {
+  return (
+    <Router history={history}>
+      <Routes />
+    </Router>
+  );
 }
+
+export default App;
