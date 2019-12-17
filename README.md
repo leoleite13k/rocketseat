@@ -1,4 +1,4 @@
-# Bootcamp Rocketseat
+# Bootcamp Rocketseat 🚀
 Aprendendo a stack de tecnologias
 
 * NodeJS
