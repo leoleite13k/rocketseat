@@ -1,6 +1,7 @@
 # Workshop de produtividade com AdonisJS
 
 ## Setup
+Inicie um novo projeto
 
 ```bash
 adonis new novoProjeto
@@ -16,6 +17,7 @@ adonis migration:run
 ```
 
 ## Server
+Inicie o servidor
 
 ```
 adonis server --dev
