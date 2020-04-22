@@ -86,3 +86,10 @@ typings/
 
 # DynamoDB Local files
 .dynamodb/
+
+
+*.log
+npm-debug.log
+yarn-error.log
+yarn.lock
+*.lock

@@ -57,3 +57,10 @@ buck-out/
 
 # CocoaPods
 /ios/Pods/
+
+
+*.log
+npm-debug.log
+yarn-error.log
+yarn.lock
+*.lock

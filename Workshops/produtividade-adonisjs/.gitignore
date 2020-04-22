@@ -14,3 +14,9 @@ database/*.sqlite
 # VSCode & Webstorm history directories
 .history
 .idea
+
+*.log
+npm-debug.log
+yarn-error.log
+yarn.lock
+*.lock
