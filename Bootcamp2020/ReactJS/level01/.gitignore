@@ -114,5 +114,5 @@ dist
 .yarn/build-state.yml
 .pnp.*
 
-.*log
-.*lock
+*.log
+*.lock
