@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Platform } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import { KEY_GOOGLE_API } from 'react-native-dotenv';
 
 export default function Search({ onLocationSelected }) {
   const [searchFocused, setSearchFocused] = useState(false);
@@ -13,7 +14,7 @@ export default function Search({ onLocationSelected }) {
         onLocationSelected(data, details);
       }}
       query={{
-        key: 'AIzaSyDwu23LuQgFVT8pUUF0pFzGkXVAG1Q25KI',
+        key: KEY_GOOGLE_API,
         language: 'pt',
       }}
       textInputProps={{

@@ -3,6 +3,7 @@ import { Image } from 'react-native';
 import { Marker } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 import Geocoder from 'react-native-geocoding';
+import { KEY_GOOGLE_API } from 'react-native-dotenv';
 
 import { getPixelSize } from '../../utils';
 
@@ -24,7 +25,7 @@ import {
 import markerImage from '../../assets/marker.png';
 import backImage from '../../assets/back.png';
 
-Geocoder.init('AIzaSyDwu23LuQgFVT8pUUF0pFzGkXVAG1Q25KI');
+Geocoder.init(KEY_GOOGLE_API);
 
 export default function Map() {
   const [region, setRegion] = useState({});
