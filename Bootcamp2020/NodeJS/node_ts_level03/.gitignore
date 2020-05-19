@@ -117,3 +117,5 @@ dist
 
 *.log
 *.lock
+tmp/*
+!tmp/.gitkeep
