@@ -1,58 +1,99 @@
-import React from 'react';
+import React, { useState, useEffect, FormEvent } from 'react';
 import { FiChevronRight } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
+import api from '../../services/api';
 
-import { Title, Form, Repositories } from './styles';
+import { Title, Form, Error, Repositories } from './styles';
 
 import logo from '../../assets/logo.svg';
 
+interface Repository {
+  full_name: string;
+  description: string;
+  owner: {
+    login: string;
+    avatar_url: string;
+  };
+}
+
 const Dashboard: React.FC = () => {
+  const [newRepo, setNewRepo] = useState('');
+  const [inputError, setInputError] = useState('');
+  const [repositories, setRepositories] = useState<Repository[]>(() => {
+    const storagedRepositories = localStorage.getItem(
+      '@GithubExplorer:repositories',
+    );
+
+    if (storagedRepositories) {
+      return JSON.parse(storagedRepositories);
+    }
+
+    return [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem(
+      '@GithubExplorer:repositories',
+      JSON.stringify(repositories),
+    );
+  }, [repositories]);
+
+  async function handleAddRepository(
+    event: FormEvent<HTMLFormElement>,
+  ): Promise<void> {
+    event.preventDefault();
+
+    if (!newRepo) {
+      setInputError('Digite o autor/nome do repositório');
+      return;
+    }
+
+    try {
+      const { data } = await api.get<Repository>(`/repos/${newRepo}`);
+
+      setRepositories([...repositories, data]);
+      setNewRepo('');
+      setInputError('');
+    } catch (error) {
+      setInputError('Erro na busca por este repositório');
+    }
+  }
+
   return (
     <>
       <img src={logo} alt="Logo GitHub Explorer" />
       <Title>Explore repositórios no Github</Title>
 
-      <Form action="">
-        <input type="text" placeholder="Digite o nome do repositório" />
+      <Form hasError={!!inputError} onSubmit={handleAddRepository}>
+        <input
+          type="text"
+          placeholder="Digite o nome do repositório"
+          value={newRepo}
+          onChange={event => setNewRepo(event.target.value)}
+        />
         <button type="submit">Pesquisa</button>
       </Form>
 
+      {inputError && <Error>{inputError}</Error>}
+
       <Repositories>
-        <a href="teste">
-          <img
-            src="https://avatars3.githubusercontent.com/u/30642674?s=460&u=9c493b18b889def7a4b7f85b163ff5df47a7b6fe&v=4"
-            alt="Leonardo Leite"
-          />
-          <div>
-            <strong>rocketseat/unform</strong>
-            <p>Easy peasy higly scalable ReactJS and React Native Forms</p>
-          </div>
+        {repositories.map(repository => (
+          <Link
+            key={repository.full_name}
+            to={`/repository/${repository.full_name}`}
+          >
+            <img
+              src={repository.owner.avatar_url}
+              alt={repository.owner.login}
+            />
+            <div>
+              <strong>{repository.full_name}</strong>
+              <p>{repository.description}</p>
+            </div>
 
-          <FiChevronRight size={20} />
-        </a>
-        <a href="teste">
-          <img
-            src="https://avatars3.githubusercontent.com/u/30642674?s=460&u=9c493b18b889def7a4b7f85b163ff5df47a7b6fe&v=4"
-            alt="Leonardo Leite"
-          />
-          <div>
-            <strong>rocketseat/unform</strong>
-            <p>Easy peasy higly scalable ReactJS and React Native Forms</p>
-          </div>
-
-          <FiChevronRight size={20} />
-        </a>
-        <a href="teste">
-          <img
-            src="https://avatars3.githubusercontent.com/u/30642674?s=460&u=9c493b18b889def7a4b7f85b163ff5df47a7b6fe&v=4"
-            alt="Leonardo Leite"
-          />
-          <div>
-            <strong>rocketseat/unform</strong>
-            <p>Easy peasy higly scalable ReactJS and React Native Forms</p>
-          </div>
-
-          <FiChevronRight size={20} />
-        </a>
+            <FiChevronRight size={20} />
+          </Link>
+        ))}
       </Repositories>
     </>
   );
