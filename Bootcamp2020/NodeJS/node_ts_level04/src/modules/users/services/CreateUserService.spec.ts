@@ -30,12 +30,10 @@ describe('CreateUser', () => {
       password: '123456'
     })
 
-    expect(
-      createUser.execute({
-        name: 'John Doe',
-        email: 'johndoe@email.com',
-        password: '123456'
-      })
-    ).rejects.toBeInstanceOf(AppError);
+    await expect(createUser.execute({
+      name: 'John Doe',
+      email: 'johndoe@email.com',
+      password: '123456'
+    })).rejects.toBeInstanceOf(AppError);
   })
 });
