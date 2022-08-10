@@ -1,6 +1,7 @@
 # Bootcamp Rocketseat 🚀
-Aprendendo a stack de tecnologias
+Learning and updating my stack of technology
 
+Stack
 * NodeJS
 * ReactJS
 * React Native
