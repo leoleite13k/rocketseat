@@ -1,6 +1,7 @@
 import http from "node:http";
 import { json } from "./middlewares/json.js";
 import { routes } from "./routes.js";
+import { extractQueryParams } from "./utils/extract-query-params.js";
 
 // - Criar usuários
 // - Listagem usuários
@@ -21,16 +22,29 @@ import { routes } from "./routes.js";
 // Cabeçalhos HTTP => São informações adicionais que o cliente e o servidor podem enviar para se comunicar melhor, como por exemplo, o tipo de conteúdo que está sendo enviado, a autenticação do usuário, entre outros.
 // HTTP Status Codes => São códigos numéricos que indicam o resultado de uma requisição HTTP, como por exemplo, 200 (OK), 201 (Created), 400 (Bad Request), 401 (Unauthorized), 404 (Not Found), entre outros.
 
+// Query parameters => São parâmetros que são enviados na URL da requisição, geralmente usados para filtrar ou paginar resultados, por exemplo: /users?userId=1&name=Jhon
+// Route parameters => São parâmetros que são enviados na URL da requisição, geralmente usados para identificar um recurso específico, por exemplo: /users/123 (onde 123 é o ID do usuário)
+// Request body => São os dados que são enviados no corpo da requisição, geralmente usados para criar ou editar um recurso, por exemplo: { "name": "John", "email": "john@example.com" }
+
+// Query parameters => URL statfull => /users?name=Jhon - envia paramêtros não sensiveis, utilizada para filtros, paginação, ordenação, etc
+// Route parameters => URL stateless => /users/123 - envia paramêtros sensiveis, utilizada para identificar um recurso específico
+// Request body => Envia dados no corpo da requisição, geralmente utilizado para criar ou editar um recurso, pode conter informações sensiveis, como senhas, por exemplo: { "name": "John", "email": "john@example.com", "password": "123456" }
+
 const server = http.createServer(async (req, res) => {
   const { method, url } = req;
 
   await json(req, res);
 
   const route = routes.find(
-    (route) => route.method === method && route.path === url,
+    (route) => route.method === method && route.path.test(url),
   );
 
   if (route) {
+    const routeParams = req.url.match(route.path);
+    const { query, ...params } = routeParams.groups;
+
+    req.params = params;
+    req.query = extractQueryParams(query);
     return route.handler(req, res);
   }
 

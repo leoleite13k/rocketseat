@@ -19,17 +19,44 @@ export class Database {
     fs.writeFile(databasePath, JSON.stringify(this.#database));
   }
 
-  select(key) {
-    return this.#database[key] ?? [];
+  select(table, search) {
+    let data = this.#database[table] ?? [];
+    const hasSearch = !!Object.values(search).filter(Boolean).length;
+
+    if (!hasSearch) return data;
+
+    return data.filter((row) =>
+      Object.entries(search).some(([key, value]) =>
+        row[key]?.toLowerCase().includes(value?.toLowerCase()),
+      ),
+    );
   }
 
-  insert(key, value) {
-    if (Array.isArray(this.#database[key])) {
-      this.#database[key].push(value);
+  insert(table, data) {
+    if (Array.isArray(this.#database[table])) {
+      this.#database[table].push(data);
     } else {
-      this.#database[key] = [value];
+      this.#database[table] = [data];
     }
 
     this.#persist();
+  }
+
+  update(table, id, data) {
+    const rowIndex = this.#database[table]?.findIndex((row) => row.id === id);
+
+    if (rowIndex > -1) {
+      this.#database[table][rowIndex] = { id, ...data };
+      this.#persist();
+    }
+  }
+
+  delete(table, id) {
+    const rowIndex = this.#database[table]?.findIndex((row) => row.id === id);
+
+    if (rowIndex > -1) {
+      this.#database[table].splice(rowIndex, 1);
+      this.#persist();
+    }
   }
 }
