@@ -1,0 +1,63 @@
+import fs from "fs/promises";
+
+const databasePath = new URL("../db.json", import.meta.url);
+
+export class Database {
+  #database = {};
+
+  constructor() {
+    fs.readFile(databasePath, "utf-8")
+      .then((data) => {
+        this.#database = JSON.parse(data);
+      })
+      .catch(() => {
+        this.#persist();
+      });
+  }
+
+  #persist() {
+    fs.writeFile(databasePath, JSON.stringify(this.#database));
+  }
+
+  select(table, search) {
+    let data = this.#database[table] ?? [];
+    const hasSearch = !!Object.values(search).filter(Boolean).length;
+
+    if (!hasSearch) return data;
+
+    return data.filter((row) =>
+      Object.entries(search).some(([key, value]) =>
+        row[key]?.toLowerCase().includes(value?.toLowerCase()),
+      ),
+    );
+  }
+
+  insert(table, data) {
+    if (Array.isArray(this.#database[table])) {
+      this.#database[table].push(data);
+    } else {
+      this.#database[table] = [data];
+    }
+
+    this.#persist();
+  }
+
+  update(table, id, data) {
+    const rowIndex = this.#database[table]?.findIndex((row) => row.id === id);
+    const prevData = this.#database[table][rowIndex];
+
+    if (rowIndex > -1) {
+      this.#database[table][rowIndex] = { id, ...prevData, ...data };
+      this.#persist();
+    }
+  }
+
+  delete(table, id) {
+    const rowIndex = this.#database[table]?.findIndex((row) => row.id === id);
+
+    if (rowIndex > -1) {
+      this.#database[table].splice(rowIndex, 1);
+      this.#persist();
+    }
+  }
+}
